@@ -1,0 +1,160 @@
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 15px;
+    margin: 10px;
+    background: #e72b73;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    
+}
+button a {
+    text-decoration: none;
+    color: aliceblue;
+}
+
+button:hover {
+    background: rgb(236, 48, 104);
+}
+
+.header {
+    background-color: #AC1754;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+}
+
+.header-izquierda {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.main {
+    background-color: aliceblue;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.recuperar-contenedor {
+    background-color: #AC1754;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    text-align: center;
+}
+
+.recuperar-contenedor h2 {
+    margin-bottom: 20px;
+    color: aliceblue;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.input-group label {
+    display: block;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    color: aliceblue;
+}
+
+.input-group input {
+    width: 90%;
+    padding: 8px;
+    border: 1px solid rgb(250, 250, 250);
+    border-radius: 5px;
+}
+
+.footer {
+    background-color: #AC1754;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+}
+
+.footer-izquierda {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-derecha {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    margin-left: 15px;
+    padding: 10px;
+    padding-top: 15px;
+}
+
+.logo-footer {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 5px;
+    padding-top: 10px;
+    padding-right: 10px;
+}
+
+.enlace-footer {
+    text-decoration: none;
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: aliceblue;
+}
+
+.enlace-footer:hover {
+    text-decoration: underline;
+}
+
+nav.footer-centro {
+    display: flex;
+    gap: 10px;
+}
+
+nav.footer {
+    display: flex;
+    gap: 10px;
+}
+
+.titulo {
+    font-size: 24px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    color: aliceblue;
+}
+
+.titulo-footer {
+    font-size: 14px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    color: aliceblue;
+    padding-left: 10px;
+    padding-bottom: 5px;
+}
+

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Propiedad</title>
+    <link rel="stylesheet" href="css/registro.css">
+
+</head>
+<body>
+    <header class="header">
+        <div class="header-izquierda">
+            <img src="img/Logo.png" alt="Logo PNK" class="logo">
+            <div class="titulo">PNK INMOBILIARIA</div>
+        </div>
+    </header>  
+    <div class="registro-forma">
+        <h2>Registro de Propiedad</h2>
+        <form action="#" method="post">
+            <div class="input-group">
+                <label for="tipo_propiedad">Tipo de Propiedad:</label>
+                <select name="tipo_propiedad" id="tipo_propiedad">
+                    <option value="casa">Casa</option>
+                    <option value="departamento">Departamento</option>
+                    <option value="terreno">Terreno</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="descripcion">Descripción:</label>
+                <input type="text" name="descripcion" id="descripcion">
+            </div>
+            <div class="input-group">
+                <label for="cant_baños">Cantidad de Baños:</label>
+                <select name="cant_baños" id="cant_baños">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="cant_dormitorios">Cantidad de Dormitorios:</label>
+                <select name="cant_dormitorios" id="cant_dormitorios">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="area_total">Área Total del Terreno:</label>
+                <input type="text" name="area_total" id="area_total">
+            </div>
+            <div class="input-group">
+                <label for="area_construida">Área Construida:</label>
+                <input type="text" name="area_construida" id="area_construida">
+            </div>
+            <div class="input-group">
+                <label for="precio_dinero">Precio en Dinero:</label>
+                <input type="number" name="precio_dinero" id="precio_dinero">
+            </div>
+            <div class="input-group">
+                <label for="precio_UF">Precio en UF:</label>
+                <input type="number" name="precio_UF" id="precio_UF">
+            </div>
+            <div class="input-group">
+                <label for="fecha">Fecha de Publicación:</label>
+                <input type="date" name="fecha" id="fecha">
+            </div>
+            <div class="input-group">
+                <label for="opcion_visita">Opción de Solicitar Visita:</label>
+                <input type="radio" name="opcion_visita" value="si" id="visita_si">
+                <label for="visita_si">Sí</label>
+                <input type="radio" name="opcion_visita" value="no" id="visita_no">
+                <label for="visita_no">No</label>
+            </div>
+            <div class="input-group">
+                <label for="propiedad_extras">La propiedad cuenta con:</label>
+                <div class="checkbox-group">
+                    <div>
+                        <input type="checkbox" name="propiedad_extras" value="bodega" id="bodega">
+                        <label for="bodega">Bodega</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="propiedad_extras" value="estacionamiento" id="estacionamiento">
+                        <label for="estacionamiento">Estacionamiento</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="propiedad_extras" value="logia" id="logia">
+                        <label for="logia">Logia</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="propiedad_extras" value="cocina_amoblada" id="cocina_amoblada">
+                        <label for="cocina_amoblada">Cocina Amoblada</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="propiedad_extras" value="ante_jardin" id="ante_jardin">
+                        <label for="ante_jardin">Ante-Jardín</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="propiedad_extras" value="patio_trasero" id="patio_trasero">
+                        <label for="patio_trasero">Patio Trasero</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="propiedad_extras" value="piscina" id="piscina">
+                        <label for="piscina">Piscina</label>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="fotos">Fotografías de la Propiedad:</label>
+                <input type="file" name="fotos" id="fotos">
+            </div>
+            <div class="input-group">
+                <label for="ubicacion">Ubicación en el Mapa:</label>
+                <input type="text" name="ubicacion" id="ubicacion">
+            </div>
+            <button type="submit">Registrar</button>
+        </form>
+        <div class="button">
+            <a href="mantenedor-p.html">Volver</a>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="footer-izquierda">
+            <img src="img/Logo.png" alt="Logo PNK" class="logo-footer">
+            <div class="titulo-footer">PNK INMOBILIARIA</div>
+        </div>
+
+        <nav class="footer-centro">
+            <a href="registro_propietario.html" class="enlace-footer">Registro Propietario</a>
+            <a href="registro_gestor.html" class="enlace-footer">Registro Gestor</a>
+            <a href="registro_usuario.html" class="enlace-footer">Registro Usuario</a>
+        </nav>
+
+        <nav class="footer-derecha">
+            <a href="https://www.instagram.com/tioreneoficial_/?hl=es" target="_blank">
+                <img src="img/logo-insta.png" alt="Logo instagram" class="logo-footer">
+            </a>
+            <a href="https://www.ticketmaster.cl/event/popin-un-show-muy-penca-centro-cultural-san-gines" target="_blank">
+                <img src="img/linkedin.png" alt="Logo Linkedin" class="logo-footer">
+            </a>
+        </nav>
+
+    </footer>
+</body>
+</html>
+
+
