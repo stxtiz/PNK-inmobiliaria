@@ -55,11 +55,137 @@ pnk/
 └── ...
 ```
 
+## 🗄️ Estructura de Base de Datos
+
+La base de datos **`penka`** está diseñada específicamente para el mercado inmobiliario de la Región de Coquimbo:
+
+### 📊 Tablas Principales
+
+#### 🏠 **propiedades**
+- Información completa de inmuebles
+- Características: dormitorios, baños, áreas
+- Precios en Pesos Chilenos y UF
+- Amenidades: bodega, estacionamiento, piscina, etc.
+- Relación con tipo de propiedad y ubicación
+
+#### 👥 **usuarios**
+- Sistema de roles: Administrador (3), Propietario (2), Gestor Free (1)
+- Validación RUT chileno
+- Encriptación bcrypt para contraseñas
+- Certificados para gestores inmobiliarios
+
+#### 🖼️ **galeria**
+- Múltiples imágenes por propiedad
+- Imagen principal destacada
+- Gestión de estados de fotos
+
+#### 🌎 **Jerarquía Geográfica**
+- **regiones**: Región de Coquimbo
+- **provincias**: Elqui, Limarí, Choapa
+- **comunas**: 15 comunas (La Serena, Coquimbo, Ovalle, etc.)
+- **sectores**: Barrios específicos por comuna
+
+#### 🏢 **tipo_propiedad**
+- Casa, Departamento, Terreno
+- Estados activos/inactivos
+
+### 📋 Esquema Detallado de Tablas
+
+#### Tabla `propiedades`
+```sql
+CREATE TABLE propiedades (
+  idpropiedades INT AUTO_INCREMENT PRIMARY KEY,
+  titulopropiedad VARCHAR(50) NOT NULL,
+  descripcion TEXT,
+  cant_banos INT,
+  cant_domitorios INT,  -- [sic] dormitorios
+  area_total INT,
+  area_construida INT,
+  precio_pesos INT,
+  precio_uf INT,
+  fecha_publicacion DATE,
+  estado INT,
+  -- Amenidades Boolean (0/1)
+  bodega INT,
+  estacionamiento INT,
+  logia INT,
+  cocinaamoblada INT,
+  antejardin INT,
+  patiotrasero INT,
+  piscina INT,
+  -- Relaciones
+  idtipo_propiedad INT,
+  sectores_idsectores INT
+);
+```
+
+#### Tabla `usuarios`
+```sql
+CREATE TABLE usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  rut VARCHAR(12) NOT NULL,
+  nombres VARCHAR(50) NOT NULL,
+  ap_paterno VARCHAR(50) NOT NULL,
+  ap_materno VARCHAR(50) NOT NULL,
+  usuario VARCHAR(50) NOT NULL,      -- Email
+  clave VARCHAR(250) NOT NULL,       -- bcrypt hash
+  sexo VARCHAR(4) NOT NULL,          -- M/F/0
+  estado INT NOT NULL,               -- 1=activo, 0=inactivo
+  npropiedad INT NOT NULL,           -- Número de propiedad
+  telefono VARCHAR(20) NOT NULL,     -- +569XXXXXXXX
+  fechanacimiento DATE NOT NULL,
+  tipo INT NOT NULL,                 -- 1=Gestor, 2=Propietario, 3=Admin
+  certificado VARCHAR(100)           -- Archivo PDF para gestores
+);
+```
+
+#### Jerarquía Geográfica
+```sql
+-- Región (solo Coquimbo)
+regiones: idregiones, region, estado
+
+-- Provincias (Elqui, Limarí, Choapa)
+provincias: idprovincias, provincia, estado, idregiones
+
+-- 15 Comunas principales
+comunas: idcomunas, comuna, estado, idprovincias
+
+-- Sectores por comuna
+sectores: idsectores, sector, estado, idcomunas
+```
+
+#### Galería de Imágenes
+```sql
+CREATE TABLE galeria (
+  idgaleria INT AUTO_INCREMENT PRIMARY KEY,
+  foto VARCHAR(45),
+  estado INT,
+  principal INT,                     -- 1=imagen principal
+  idpropiedades INT
+);
+```
+
+### 📍 Cobertura Geográfica
+
+**Región de Coquimbo** con sus 3 provincias:
+
+#### 🌊 **Provincia de Elqui**
+- La Serena (Balmaceda, 4 Esquinas, La Florida, etc.)
+- Coquimbo (Bosque San Carlos, Tierras Blancas, etc.)
+- Andacollo, La Higuera, Paiguano, Vicuña
+
+#### 🏔️ **Provincia de Limarí**
+- Ovalle, Combarbalá, Monte Patria
+- Punitaqui, Río Hurtado
+
+#### 🌵 **Provincia de Choapa**
+- Illapel, Canela, Los Vilos, Salamanca
+
 ## 🔧 Instalación
 
 ### Prerrequisitos
 - WAMP, XAMPP o servidor con PHP 7.4+
-- MySQL 5.7+
+- MySQL 5.7+ o MySQL 8.0+
 - Navegador web moderno
 
 ### Pasos de Instalación
@@ -71,9 +197,13 @@ pnk/
    ```
 
 2. **Configurar la base de datos**
-   - Crear una base de datos llamada `penka`
-   - Importar el esquema SQL (si está disponible)
-   - Configurar las credenciales en `setup/config.php`
+   ```sql
+   -- Crear base de datos
+   CREATE DATABASE penka CHARACTER SET latin1 COLLATE latin1_spanish_ci;
+   
+   -- Importar estructura y datos
+   mysql -u root -p penka < "penka (5).sql"
+   ```
 
 3. **Configurar conexión**
    ```php
@@ -82,11 +212,20 @@ pnk/
    define('DB_USER', 'tu_usuario');
    define('DB_PASS', 'tu_contraseña');
    define('DB_NAME', 'penka');
+   define('DB_PORT', 3306);
    ```
 
-4. **Ejecutar el proyecto**
+4. **Verificar instalación**
    - Iniciar servidor local (WAMP/XAMPP)
    - Navegar a `http://localhost/pnk`
+   - Probar con `test_conexion.php`
+
+5. **Usuario por defecto**
+   ```
+   Email: admin@admin.cl
+   Contraseña: [Ver en BD - encriptada con bcrypt]
+   Tipo: Administrador (3)
+   ```
 
 ## 👥 Tipos de Usuario
 
