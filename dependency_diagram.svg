@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font: bold 20px Arial; text-anchor: middle; }
+      .module { fill: #e1f5fe; stroke: #0277bd; stroke-width: 2; }
+      .config { fill: #f3e5f5; stroke: #7b1fa2; stroke-width: 2; }
+      .frontend { fill: #e8f5e8; stroke: #388e3c; stroke-width: 2; }
+      .auth { fill: #fff3e0; stroke: #f57c00; stroke-width: 2; }
+      .crud { fill: #fce4ec; stroke: #c2185b; stroke-width: 2; }
+      .lib { fill: #f1f8e9; stroke: #689f38; stroke-width: 2; }
+      .text { font: 12px Arial; text-anchor: middle; }
+      .dependency { stroke: #666; stroke-width: 1.5; fill: none; marker-end: url(#arrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666" />
+    </marker>
+  </defs>
+  
+  <!-- Título -->
+  <text x="600" y="30" class="title">PNK INMOBILIARIA - Diagrama de Dependencias</text>
+  
+  <!-- Core Configuration -->
+  <rect x="500" y="60" width="200" height="60" class="config" rx="5"/>
+  <text x="600" y="85" class="text">setup/config.php</text>
+  <text x="600" y="105" class="text">(MySQL Connection)</text>
+  
+  <!-- Frontend Entry Points -->
+  <rect x="50" y="180" width="150" height="50" class="frontend" rx="5"/>
+  <text x="125" y="200" class="text">index.php</text>
+  <text x="125" y="215" class="text">(Main Page)</text>
+  
+  <rect x="250" y="180" width="150" height="50" class="frontend" rx="5"/>
+  <text x="325" y="200" class="text">dashboard2.php</text>
+  <text x="325" y="215" class="text">(Admin Panel)</text>
+  
+  <rect x="450" y="180" width="150" height="50" class="frontend" rx="5"/>
+  <text x="525" y="200" class="text">dashboard.php</text>
+  <text x="525" y="215" class="text">(User CRUD)</text>
+  
+  <rect x="650" y="180" width="150" height="50" class="frontend" rx="5"/>
+  <text x="725" y="200" class="text">mis_propiedades.php</text>
+  <text x="725" y="215" class="text">(Properties)</text>
+  
+  <!-- Authentication Module -->
+  <rect x="300" y="300" width="150" height="50" class="auth" rx="5"/>
+  <text x="375" y="320" class="text">procesa.php</text>
+  <text x="375" y="335" class="text">(Login Handler)</text>
+  
+  <rect x="500" y="300" width="150" height="50" class="auth" rx="5"/>
+  <text x="575" y="320" class="text">procesalogin.php</text>
+  <text x="575" y="335" class="text">(Session Router)</text>
+  
+  <!-- CRUD Operations -->
+  <rect x="100" y="420" width="150" height="50" class="crud" rx="5"/>
+  <text x="175" y="440" class="text">crudGestor.php</text>
+  <text x="175" y="455" class="text">(User CRUD)</text>
+  
+  <rect x="300" y="420" width="150" height="50" class="crud" rx="5"/>
+  <text x="375" y="440" class="text">crud_galeria.php</text>
+  <text x="375" y="455" class="text">(Gallery CRUD)</text>
+  
+  <rect x="500" y="420" width="150" height="50" class="crud" rx="5"/>
+  <text x="575" y="440" class="text">procesa_propiedades.php</text>
+  <text x="575" y="455" class="text">(Properties CRUD)</text>
+  
+  <!-- Filter & Search -->
+  <rect x="700" y="420" width="150" height="50" class="module" rx="5"/>
+  <text x="775" y="440" class="text">filtrar_propiedades.php</text>
+  <text x="775" y="455" class="text">(Property Filter)</text>
+  
+  <rect x="900" y="420" width="150" height="50" class="module" rx="5"/>
+  <text x="975" y="440" class="text">procesafiltro.php</text>
+  <text x="975" y="455" class="text">(Region Filter)</text>
+  
+  <!-- Registration Forms -->
+  <rect x="50" y="540" width="150" height="50" class="frontend" rx="5"/>
+  <text x="125" y="560" class="text">registro_propietario.php</text>
+  <text x="125" y="575" class="text">(Owner Register)</text>
+  
+  <rect x="250" y="540" width="150" height="50" class="frontend" rx="5"/>
+  <text x="325" y="560" class="text">registro_gestor.php</text>
+  <text x="325" y="575" class="text">(Manager Register)</text>
+  
+  <!-- Utility Modules -->
+  <rect x="500" y="540" width="150" height="50" class="module" rx="5"/>
+  <text x="575" y="560" class="text">verificar_usuarios.php</text>
+  <text x="575" y="575" class="text">(User Verification)</text>
+  
+  <rect x="700" y="540" width="150" height="50" class="module" rx="5"/>
+  <text x="775" y="560" class="text">vermas.php</text>
+  <text x="775" y="575" class="text">(Property Details)</text>
+  
+  <!-- External Libraries -->
+  <rect x="50" y="660" width="120" height="40" class="lib" rx="5"/>
+  <text x="110" y="680" class="text">Bootstrap 5.0.2</text>
+  <text x="110" y="690" class="text">(CSS Framework)</text>
+  
+  <rect x="200" y="660" width="120" height="40" class="lib" rx="5"/>
+  <text x="260" y="680" class="text">jQuery 3.7.1</text>
+  <text x="260" y="690" class="text">(JS Library)</text>
+  
+  <rect x="350" y="660" width="120" height="40" class="lib" rx="5"/>
+  <text x="410" y="680" class="text">SweetAlert2</text>
+  <text x="410" y="690" class="text">(Alert Library)</text>
+  
+  <rect x="500" y="660" width="120" height="40" class="lib" rx="5"/>
+  <text x="560" y="680" class="text">jQuery.Rut.js</text>
+  <text x="560" y="690" class="text">(Chilean RUT)</text>
+  
+  <rect x="650" y="660" width="120" height="40" class="lib" rx="5"/>
+  <text x="710" y="680" class="text">MySQL Database</text>
+  <text x="710" y="690" class="text">(penka DB)</text>
+  
+  <!-- Dependencies (arrows) -->
+  <!-- Config to all modules -->
+  <line x1="580" y1="120" x2="125" y2="180" class="dependency"/>
+  <line x1="600" y1="120" x2="325" y2="180" class="dependency"/>
+  <line x1="600" y1="120" x2="525" y2="180" class="dependency"/>
+  <line x1="620" y1="120" x2="725" y2="180" class="dependency"/>
+  
+  <!-- Index to auth -->
+  <line x1="200" y1="230" x2="375" y2="300" class="dependency"/>
+  
+  <!-- Auth flow -->
+  <line x1="450" y1="325" x2="500" y2="325" class="dependency"/>
+  
+  <!-- CRUD dependencies -->
+  <line x1="525" y1="230" x2="175" y2="420" class="dependency"/>
+  <line x1="525" y1="230" x2="375" y2="420" class="dependency"/>
+  <line x1="725" y1="230" x2="575" y2="420" class="dependency"/>
+  
+  <!-- Filter dependencies -->
+  <line x1="725" y1="230" x2="775" y2="420" class="dependency"/>
+  <line x1="125" y1="230" x2="975" y2="420" class="dependency"/>
+  
+  <!-- Registration forms -->
+  <line x1="125" y1="180" x2="125" y2="540" class="dependency"/>
+  <line x1="125" y1="180" x2="325" y2="540" class="dependency"/>
+  
+  <!-- All modules to config -->
+  <line x1="175" y1="420" x2="580" y2="120" class="dependency"/>
+  <line x1="375" y1="420" x2="600" y2="120" class="dependency"/>
+  <line x1="575" y1="420" x2="620" y2="120" class="dependency"/>
+  
+  <!-- External libraries usage -->
+  <line x1="110" y1="660" x2="125" y2="230" class="dependency"/>
+  <line x1="260" y1="660" x2="125" y2="230" class="dependency"/>
+  <line x1="410" y1="660" x2="125" y2="230" class="dependency"/>
+  <line x1="560" y1="660" x2="525" y2="230" class="dependency"/>
+  <line x1="710" y1="660" x2="600" y2="120" class="dependency"/>
+  
+  <!-- Legend -->
+  <rect x="900" y="60" width="250" height="120" fill="none" stroke="#333" stroke-width="1"/>
+  <text x="1025" y="80" class="text" style="font-weight: bold;">Leyenda</text>
+  
+  <rect x="910" y="90" width="15" height="15" class="config"/>
+  <text x="930" y="102" class="text" style="text-anchor: start;">Configuración</text>
+  
+  <rect x="910" y="110" width="15" height="15" class="frontend"/>
+  <text x="930" y="122" class="text" style="text-anchor: start;">Frontend</text>
+  
+  <rect x="910" y="130" width="15" height="15" class="auth"/>
+  <text x="930" y="142" class="text" style="text-anchor: start;">Autenticación</text>
+  
+  <rect x="910" y="150" width="15" height="15" class="crud"/>
+  <text x="930" y="162" class="text" style="text-anchor: start;">CRUD Operations</text>
+  
+  <rect x="1050" y="90" width="15" height="15" class="module"/>
+  <text x="1070" y="102" class="text" style="text-anchor: start;">Módulos</text>
+  
+  <rect x="1050" y="110" width="15" height="15" class="lib"/>
+  <text x="1070" y="122" class="text" style="text-anchor: start;">Librerías Externas</text>
+  
+</svg>
