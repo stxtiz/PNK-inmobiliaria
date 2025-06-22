@@ -1,6 +1,6 @@
 # PNK INMOBILIARIA 🏠
 
-Sistema de gestión inmobiliaria desarrollado en PHP especializado en la **Región de Coquimbo, Chile**. Permite la administración completa de propiedades, usuarios y transacciones inmobiliarias con enfoque geográfico específico.
+Sistema de gestión inmobiliaria desarrollado en PHP especializado en la **Región de Coquimbo, Chile**. Permite la administración completa de propiedades, usuarios y transacciones inmobiliarias con enfoque geográfico específico en las 3 provincias de Coquimbo: Elqui, Limarí y Choapa.
 
 ![PNK Inmobiliaria](img/Logo.png)
 
@@ -8,12 +8,13 @@ Sistema de gestión inmobiliaria desarrollado en PHP especializado en la **Regi�
 
 - **Gestión de Usuarios**: Sistema de roles (Administradores, Gestores Inmobiliarios Free, Propietarios)
 - **Gestión de Propiedades**: CRUD completo con características detalladas (baños, dormitorios, amenidades)
-- **Sistema de Autenticación**: Login seguro con encriptación bcrypt y validaciones robustas
-- **Filtros Geográficos**: Búsqueda jerárquica por Región → Provincia → Comuna → Sector
-- **Galería de Imágenes**: Sistema de fotos múltiples con imagen principal
-- **Validaciones Chilenas**: RUT con dígito verificador, teléfonos móviles (+569), correos
-- **Tipos de Propiedades**: Casas, Departamentos y Terrenos
+- **Sistema de Autenticación**: Login seguro con encriptación bcrypt (PHP password_hash)
+- **Filtros Geográficos**: Búsqueda jerárquica Región → Provincia → Comuna → Sector
+- **Galería de Imágenes**: Sistema de fotos múltiples con imagen principal por propiedad
+- **Validaciones Chilenas**: RUT con dígito verificador, teléfonos móviles (+569)
+- **Tipos de Propiedades**: Casa, Departamento y Terreno
 - **Precios Duales**: Manejo en Pesos Chilenos y UF (Unidad de Fomento)
+- **Amenidades Detalladas**: Bodega, Estacionamiento, Logia, Cocina Amoblada, Antejardín, Patio Trasero, Piscina
 - **Interfaz Responsiva**: Diseño adaptable con Bootstrap 5.0.2
 
 ## 🛠️ Tecnologías Utilizadas
