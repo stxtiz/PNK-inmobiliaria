@@ -1,6 +1,7 @@
 <?php
 session_start();
 include("setup/config.php");
+include("setup/PasswordValidator.php");
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,6 +25,25 @@ if(isset($_POST['opoculto'])) {
         $fechanacimiento = $_POST['fechanacimiento'];
         $sexo = $_POST['sexo'];
         $certificado = $_FILES['frm_certificado']['name'];
+
+        // Validar contraseña usando utilidad centralizada
+        $passwordError = PasswordValidator::validateAndGetError($_POST['clave'], $_POST['cclave']);
+        if ($passwordError !== null) {
+            $errorTitle = $passwordError === 'password_format' ? 'Contraseña inválida' : 'Contraseñas no coinciden';
+            $errorMessage = $passwordError === 'password_format' ? 
+                'La contraseña debe cumplir con los siguientes requisitos:<br>- Mínimo 8 caracteres<br>- Al menos una letra mayúscula (A-Z)<br>- Al menos una letra minúscula (a-z)<br>- Al menos un número (0-9)<br>- Al menos un carácter especial (!@#$%^&*)' :
+                'Las contraseñas ingresadas no coinciden. Por favor verifíquelas.';
+            echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    title: '$errorTitle',
+                    html: '$errorMessage'
+                }).then(function() {
+                    window.location = 'registro_gestor.php';
+                });
+            </script>";
+            exit();
+        }
 
         // Validar que el archivo sea PDF
         if ($_FILES['frm_certificado']['name'] != '') {

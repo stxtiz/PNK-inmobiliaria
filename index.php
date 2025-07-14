@@ -16,6 +16,7 @@ include("setup/config.php");
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="js/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/password-validation.js"></script>
     <script>
         function enviar()
         {
@@ -53,22 +54,8 @@ include("setup/config.php");
                 return false;
             }
 
-            // Validar contraseña
-            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-            if (!passwordRegex.test(password)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Contraseña inválida',
-                    html: 'La contraseña debe cumplir con los siguientes requisitos:<br>' +
-                          '- Mínimo 8 caracteres<br>' +
-                          '- Al menos una letra mayúscula<br>' +
-                          '- Al menos una letra minúscula<br>' +
-                          '- Al menos un número<br>' +
-                          '- Al menos un carácter especial (!@#$%^&*)',
-                    customClass: {
-                        popup: 'swal2-popup-arial'
-                    }
-                });
+            // Validar contraseña usando utilidad centralizada
+            if (!validateAndShowPasswordErrors(password)) {
                 return false;
             }
 

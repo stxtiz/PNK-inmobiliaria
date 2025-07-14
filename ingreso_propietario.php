@@ -9,6 +9,7 @@ session_start();
 
 try {
     include("setup/config.php");
+    include("setup/PasswordValidator.php");
     error_log("ingreso_propietario.php - Config incluido correctamente");
 } catch (Exception $e) {
     error_log("ingreso_propietario.php - Error al incluir config: " . $e->getMessage());
@@ -43,6 +44,26 @@ if(isset($_POST['opoculto'])) {
             $npropiedad = mysqli_real_escape_string($conexion, $_POST['npropiedad']);
 
             error_log("ingreso_propietario.php - Datos recibidos: RUT=$rut, Email=$correo");
+            
+            // Validar contraseña usando utilidad centralizada
+            $passwordError = PasswordValidator::validateAndGetError($_POST['clave'], $_POST['cclave']);
+            if ($passwordError !== null) {
+                error_log("ingreso_propietario.php - Error de validación de contraseña: " . $passwordError);
+                $errorTitle = $passwordError === 'password_format' ? 'Contraseña inválida' : 'Contraseñas no coinciden';
+                $errorMessage = $passwordError === 'password_format' ? 
+                    'La contraseña debe cumplir con los siguientes requisitos:<br>- Mínimo 8 caracteres<br>- Al menos una letra mayúscula (A-Z)<br>- Al menos una letra minúscula (a-z)<br>- Al menos un número (0-9)<br>- Al menos un carácter especial (!@#$%^&*)' :
+                    'Las contraseñas ingresadas no coinciden. Por favor verifíquelas.';
+                echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: '$errorTitle',
+                        html: '$errorMessage'
+                    }).then(function() {
+                        window.location = 'registro_propietario.php';
+                    });
+                </script>";
+                exit();
+            }
             
             // Verificar si el correo ya existe
             $query_verificar = "SELECT COUNT(*) as total FROM usuarios WHERE usuario = '$correo'";

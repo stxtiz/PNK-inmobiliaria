@@ -36,6 +36,24 @@ if (isset($_GET['error']) || isset($_GET['registrado']) || isset($_GET['modifica
                     window.history.replaceState({}, document.title, window.location.pathname);
                 });";
                 break;
+            case 'password_format':
+                echo "Swal.fire({
+                    icon: 'error',
+                    title: 'Contraseña inválida',
+                    html: 'La contraseña debe cumplir con los siguientes requisitos:<br>- Mínimo 8 caracteres<br>- Al menos una letra mayúscula (A-Z)<br>- Al menos una letra minúscula (a-z)<br>- Al menos un número (0-9)<br>- Al menos un carácter especial (!@#$%^&*)'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });";
+                break;
+            case 'password_mismatch':
+                echo "Swal.fire({
+                    icon: 'error',
+                    title: 'Contraseñas no coinciden',
+                    text: 'Las contraseñas ingresadas no coinciden. Por favor verifíquelas.'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });";
+                break;
         }
     } else if (isset($_GET['registrado']) && $_GET['registrado'] == '1') {
         echo "Swal.fire({
@@ -106,6 +124,7 @@ if(isset($_GET['idusu']))
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="js/jquery.Rut.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/password-validation.js"></script>
     <link rel="stylesheet" href="css/dashboard.css">
     
 
@@ -160,32 +179,12 @@ if(isset($_GET['idusu']))
                 return;
             }
 
-            // Validar que las contraseñas coincidan
+            // Validar contraseñas usando utilidad centralizada
             if (op === 'Ingresar') {
                 let clave = $('#clave').val();
                 let cclave = $('#cclave').val();
                 
-                if (clave !== cclave) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error en contraseñas',
-                        text: 'Las contraseñas no coinciden'
-                    });
-                    return;
-                }
-
-                // Validar requisitos de contraseña
-                let tieneMayuscula = /[A-Z]/.test(clave);
-                let tieneMinuscula = /[a-z]/.test(clave);
-                let tieneEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(clave);
-                let tieneLongitud = clave.length >= 8;
-
-                if (!tieneLongitud || !tieneMayuscula || !tieneMinuscula || !tieneEspecial) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Contraseña débil',
-                        text: 'La contraseña debe tener mínimo 8 caracteres, al menos una letra mayúscula, una minúscula y un carácter especial (!@#$%)'
-                    });
+                if (!validateAndShowPasswordErrors(clave, cclave)) {
                     return;
                 }
             }

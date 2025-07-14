@@ -15,6 +15,7 @@ include("setup/config.php"); // Incluye el archivo de configuración para la con
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="js/jquery.Rut.js"></script>
+    <script src="js/password-validation.js"></script>
 
 <script>
     function enviar(op)
@@ -96,28 +97,9 @@ include("setup/config.php"); // Incluye el archivo de configuración para la con
             return;
         }
 
-        // Validar contraseña robusta
-        let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        if (!passwordRegex.test(clave)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Contraseña débil',
-                html: 'La contraseña debe cumplir con los siguientes requisitos:<br>' +
-                      '- Mínimo 8 caracteres<br>' +
-                      '- Al menos una letra mayúscula<br>' +
-                      '- Al menos una letra minúscula<br>' +
-                      '- Al menos un carácter especial (!@#$%^&*)'
-            });
+        // Validar contraseña usando utilidad centralizada
+        if (!validateAndShowPasswordErrors(clave, clave2)) {
             return;
-        }
-
-        if (clave != clave2) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Contraseñas no coinciden',
-                    text: 'Por favor verifique las contraseñas'
-                });
-                return; // Evita que se ejecute el submit
         }
 
         // Validar que el archivo sea PDF

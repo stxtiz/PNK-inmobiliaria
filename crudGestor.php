@@ -1,5 +1,6 @@
 <?php
 include("setup/config.php");
+include("setup/PasswordValidator.php");
 
 if(isset($_GET['idusu']))
 {
@@ -57,6 +58,14 @@ function ingresar()
         if ($row_verificar['total'] > 0) {
             error_log("crudGestor.php - Correo ya existe");
             header("Location: dashboard.php?error=email_exists");
+            exit();
+        }
+
+        // Validar contraseña usando utilidad centralizada
+        $passwordError = PasswordValidator::validateAndGetError($_POST['clave']);
+        if ($passwordError !== null) {
+            error_log("crudGestor.php - Error de validación de contraseña: " . $passwordError);
+            header("Location: dashboard.php?error=" . $passwordError);
             exit();
         }
 
