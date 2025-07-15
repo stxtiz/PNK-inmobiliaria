@@ -6,8 +6,12 @@ if(isset($_GET['idusu']))
     $sql="DELETE FROM usuarios WHERE id = ".intval($_GET['idusu']);
     $con = conectar();
     if(!mysqli_query($con,$sql)){
-        error_log("crudGestor.php - Error al eliminar usuario: " . mysqli_error($con));
+        $error = ErrorHandler::handleDatabaseError('delete user', mysqli_error($con), 'crudGestor.php', $sql);
+        ErrorHandler::logError("Failed to delete user ID: " . intval($_GET['idusu']), ErrorHandler::LEVEL_ERROR, 'crudGestor.php');
+        header("Location: " . ErrorHandler::generateErrorRedirect("dashboard.php", ErrorHandler::ERROR_DB_QUERY));
+        exit();
     }
+    ErrorHandler::logSuccess("User deleted successfully, ID: " . intval($_GET['idusu']), 'crudGestor.php');
     header("Location: dashboard.php?eliminado=1");
     exit();
 }
@@ -27,36 +31,36 @@ function ingresar()
 {
     try {
         $con = conectar();
-        error_log("crudGestor.php - Inicio de función ingresar");
+        ErrorHandler::logError("Starting user registration process", ErrorHandler::LEVEL_INFO, 'crudGestor.php');
 
         // Validar que el archivo sea PDF
         if (isset($_FILES['frm_certificado']) && $_FILES['frm_certificado']['name'] != '') {
             $fileType = $_FILES['frm_certificado']['type'];
-            error_log("crudGestor.php - Tipo de archivo certificado: " . $fileType);
+            ErrorHandler::logError("Certificate file type: " . $fileType, ErrorHandler::LEVEL_DEBUG, 'crudGestor.php');
             if ($fileType !== 'application/pdf') {
-                error_log("crudGestor.php - Archivo certificado no es PDF");
-                header("Location: dashboard.php?error=pdf_only");
+                ErrorHandler::logError("Invalid certificate file type: " . $fileType, ErrorHandler::LEVEL_WARNING, 'crudGestor.php');
+                header("Location: " . ErrorHandler::generateErrorRedirect("dashboard.php", ErrorHandler::ERROR_INVALID_FILE));
                 exit();
             }
         }
 
         // Verificar si el correo ya existe
         $correo = mysqli_real_escape_string($con, $_POST['usuario']);
-        error_log("crudGestor.php - Verificando correo: " . $correo);
+        ErrorHandler::logError("Checking email existence: " . $correo, ErrorHandler::LEVEL_DEBUG, 'crudGestor.php');
         $query_verificar = "SELECT COUNT(*) as total FROM usuarios WHERE usuario = '$correo'";
         $result_verificar = mysqli_query($con, $query_verificar);
 
         if (!$result_verificar) {
-            error_log("crudGestor.php - Error en consulta de verificación: " . mysqli_error($con));
-            header("Location: dashboard.php?error=db_error");
+            $error = ErrorHandler::handleDatabaseError('email verification', mysqli_error($con), 'crudGestor.php', $query_verificar);
+            header("Location: " . ErrorHandler::generateErrorRedirect("dashboard.php", ErrorHandler::ERROR_DB_QUERY));
             exit();
         }
 
         $row_verificar = mysqli_fetch_assoc($result_verificar);
 
         if ($row_verificar['total'] > 0) {
-            error_log("crudGestor.php - Correo ya existe");
-            header("Location: dashboard.php?error=email_exists");
+            ErrorHandler::logError("Email already exists: " . $correo, ErrorHandler::LEVEL_WARNING, 'crudGestor.php');
+            header("Location: " . ErrorHandler::generateErrorRedirect("dashboard.php", ErrorHandler::ERROR_EMAIL_EXISTS));
             exit();
         }
 
@@ -94,28 +98,28 @@ function ingresar()
 
         $sql = "INSERT INTO usuarios (rut, nombres, ap_paterno, ap_materno, usuario, clave, sexo, estado, npropiedad, certificado, telefono, fechanacimiento, tipo) 
                 VALUES ('$rut', '$nombres', '$appaterno', '$apmaterno', '$correo', '$clave', '$sexo', '$estado', $npropiedad, '$certificado', '$telefono', '$fechanacimiento', '$tipo')";
-        error_log("crudGestor.php - Consulta SQL: " . $sql);
+        ErrorHandler::logError("Executing user insert SQL", ErrorHandler::LEVEL_DEBUG, 'crudGestor.php');
 
         $result = mysqli_query($con, $sql);
 
         if ($result) {
-            error_log("crudGestor.php - Registro exitoso");
+            ErrorHandler::logSuccess("User registered successfully: " . $correo, 'crudGestor.php', ['user_type' => $tipo]);
             if (isset($_FILES['frm_certificado']) && $_FILES['frm_certificado']['name'] != '') {
                 if (!move_uploaded_file($_FILES['frm_certificado']['tmp_name'], "file/certificados/" . $_FILES['frm_certificado']['name'])) {
-                    error_log("crudGestor.php - Error al mover archivo certificado: " . $_FILES['frm_certificado']['error']);
+                    ErrorHandler::logError("Failed to move certificate file: " . $_FILES['frm_certificado']['error'], ErrorHandler::LEVEL_WARNING, 'crudGestor.php');
                 } else {
-                    error_log("crudGestor.php - Archivo certificado movido correctamente");
+                    ErrorHandler::logSuccess("Certificate file uploaded successfully", 'crudGestor.php');
                 }
             }
             header("Location: dashboard.php?registrado=1");
         } else {
-            error_log("crudGestor.php - Error en inserción: " . mysqli_error($con));
-            header("Location: dashboard.php?error=db_error");
+            $error = ErrorHandler::handleDatabaseError('user insertion', mysqli_error($con), 'crudGestor.php', $sql);
+            header("Location: " . ErrorHandler::generateErrorRedirect("dashboard.php", ErrorHandler::ERROR_DB_QUERY));
         }
         exit();
     } catch (Exception $e) {
-        error_log("crudGestor.php - Excepción: " . $e->getMessage());
-        header("Location: dashboard.php?error=db_error");
+        ErrorHandler::logError("Exception in ingresar function: " . $e->getMessage(), ErrorHandler::LEVEL_CRITICAL, 'crudGestor.php');
+        header("Location: " . ErrorHandler::generateErrorRedirect("dashboard.php", ErrorHandler::ERROR_DB_QUERY));
         exit();
     }
 }
@@ -124,27 +128,27 @@ function modificar()
 {
     try {
         $con = conectar();
-        error_log("crudGestor.php - Inicio de función modificar");
+        ErrorHandler::logError("Starting user modification process", ErrorHandler::LEVEL_INFO, 'crudGestor.php');
 
         // Verificar si el correo ya existe (excluyendo el correo actual del usuario)
         $correo = mysqli_real_escape_string($con, $_POST['usuario']);
         $id = mysqli_real_escape_string($con, $_POST['idoculto']);
-        error_log("crudGestor.php - Verificando correo para modificar: " . $correo . ", id: " . $id);
+        ErrorHandler::logError("Checking email for modification: " . $correo . ", id: " . $id, ErrorHandler::LEVEL_DEBUG, 'crudGestor.php');
 
         $query_verificar = "SELECT COUNT(*) as total FROM usuarios WHERE usuario = '$correo' AND id != '$id'";
         $result_verificar = mysqli_query($con, $query_verificar);
 
         if (!$result_verificar) {
-            error_log("crudGestor.php - Error en consulta de verificación modificar: " . mysqli_error($con));
-            header("Location: dashboard.php?error=db_error");
+            $error = ErrorHandler::handleDatabaseError('email verification for modification', mysqli_error($con), 'crudGestor.php', $query_verificar);
+            header("Location: " . ErrorHandler::generateErrorRedirect("dashboard.php", ErrorHandler::ERROR_DB_QUERY));
             exit();
         }
 
         $row_verificar = mysqli_fetch_assoc($result_verificar);
 
         if ($row_verificar['total'] > 0) {
-            error_log("crudGestor.php - Correo ya existe en modificar");
-            header("Location: dashboard.php?error=email_exists");
+            ErrorHandler::logError("Email already exists during modification: " . $correo, ErrorHandler::LEVEL_WARNING, 'crudGestor.php');
+            header("Location: " . ErrorHandler::generateErrorRedirect("dashboard.php", ErrorHandler::ERROR_EMAIL_EXISTS));
             exit();
         }
 
@@ -173,10 +177,10 @@ function modificar()
         // Validar que el archivo sea PDF si se sube uno nuevo
         if (isset($_FILES['frm_certificado']) && $_FILES['frm_certificado']['name'] != '') {
             $fileType = $_FILES['frm_certificado']['type'];
-            error_log("crudGestor.php - Tipo de archivo certificado modificar: " . $fileType);
+            ErrorHandler::logError("Certificate file type for modification: " . $fileType, ErrorHandler::LEVEL_DEBUG, 'crudGestor.php');
             if ($fileType !== 'application/pdf') {
-                error_log("crudGestor.php - Archivo certificado no es PDF modificar");
-                header("Location: dashboard.php?error=pdf_only");
+                ErrorHandler::logError("Invalid certificate file type during modification: " . $fileType, ErrorHandler::LEVEL_WARNING, 'crudGestor.php');
+                header("Location: " . ErrorHandler::generateErrorRedirect("dashboard.php", ErrorHandler::ERROR_INVALID_FILE));
                 exit();
             }
         }
@@ -184,29 +188,29 @@ function modificar()
         if (isset($_FILES['frm_certificado']) && $_FILES['frm_certificado']['name'] != '') {
             $sql = "UPDATE usuarios SET rut = '" . mysqli_real_escape_string($con, $_POST['rut']) . "', nombres = '" . mysqli_real_escape_string($con, $_POST['nombres']) . "', ap_paterno = '" . mysqli_real_escape_string($con, $_POST['appaterno']) . "', ap_materno = '" . mysqli_real_escape_string($con, $_POST['apmaterno']) . "', usuario = '" . mysqli_real_escape_string($con, $_POST['usuario']) . "', sexo = '" . mysqli_real_escape_string($con, $_POST['sexo']) . "', estado = '" . mysqli_real_escape_string($con, $_POST['estado']) . "', npropiedad = $npropiedad, certificado = '$certificado', telefono = '" . mysqli_real_escape_string($con, $_POST['telefono']) . "', fechanacimiento = '" . mysqli_real_escape_string($con, $_POST['fechanacimiento']) . "', tipo = '" . $tipo . "' WHERE id =" . intval($_POST['idoculto']);
             if (!move_uploaded_file($_FILES['frm_certificado']['tmp_name'], "file/certificados/" . $_FILES['frm_certificado']['name'])) {
-                error_log("crudGestor.php - Error al mover archivo certificado modificar: " . $_FILES['frm_certificado']['error']);
+                ErrorHandler::logError("Failed to move certificate file during modification: " . $_FILES['frm_certificado']['error'], ErrorHandler::LEVEL_WARNING, 'crudGestor.php');
             } else {
-                error_log("crudGestor.php - Archivo certificado movido correctamente modificar");
+                ErrorHandler::logSuccess("Certificate file uploaded successfully during modification", 'crudGestor.php');
             }
         } else {
             $sql = "UPDATE usuarios SET rut = '" . mysqli_real_escape_string($con, $_POST['rut']) . "', nombres = '" . mysqli_real_escape_string($con, $_POST['nombres']) . "', ap_paterno = '" . mysqli_real_escape_string($con, $_POST['appaterno']) . "', ap_materno = '" . mysqli_real_escape_string($con, $_POST['apmaterno']) . "', usuario = '" . mysqli_real_escape_string($con, $_POST['usuario']) . "', sexo = '" . mysqli_real_escape_string($con, $_POST['sexo']) . "', estado = '" . mysqli_real_escape_string($con, $_POST['estado']) . "', npropiedad = $npropiedad, telefono = '" . mysqli_real_escape_string($con, $_POST['telefono']) . "', fechanacimiento = '" . mysqli_real_escape_string($con, $_POST['fechanacimiento']) . "', tipo = '" . $tipo . "' WHERE id =" . intval($_POST['idoculto']);
         }
 
-        error_log("crudGestor.php - Consulta SQL modificar: " . $sql);
+        ErrorHandler::logError("Executing user update SQL", ErrorHandler::LEVEL_DEBUG, 'crudGestor.php');
 
         $result = mysqli_query($con, $sql);
 
         if ($result) {
-            error_log("crudGestor.php - Modificación exitosa");
+            ErrorHandler::logSuccess("User modified successfully: " . $correo, 'crudGestor.php', ['user_id' => $id]);
             header("Location: dashboard.php?modificado=1");
         } else {
-            error_log("crudGestor.php - Error en actualización: " . mysqli_error($con));
-            header("Location: dashboard.php?error=db_error");
+            $error = ErrorHandler::handleDatabaseError('user modification', mysqli_error($con), 'crudGestor.php', $sql);
+            header("Location: " . ErrorHandler::generateErrorRedirect("dashboard.php", ErrorHandler::ERROR_DB_QUERY));
         }
         exit();
     } catch (Exception $e) {
-        error_log("crudGestor.php - Excepción: " . $e->getMessage());
-        header("Location: dashboard.php?error=db_error");
+        ErrorHandler::logError("Exception in modificar function: " . $e->getMessage(), ErrorHandler::LEVEL_CRITICAL, 'crudGestor.php');
+        header("Location: " . ErrorHandler::generateErrorRedirect("dashboard.php", ErrorHandler::ERROR_DB_QUERY));
         exit();
     }
 }
@@ -214,10 +218,17 @@ function modificar()
 function eliminar()
 {
     $con = conectar();
-    $sql="DELETE FROM usuarios WHERE id = ".intval($_POST['idoculto']);
+    $id = intval($_POST['idoculto']);
+    $sql="DELETE FROM usuarios WHERE id = " . $id;
+    
     if(!mysqli_query($con,$sql)){
-        error_log("crudGestor.php - Error al eliminar usuario: " . mysqli_error($con));
+        $error = ErrorHandler::handleDatabaseError('delete user via form', mysqli_error($con), 'crudGestor.php', $sql);
+        ErrorHandler::logError("Failed to delete user ID: " . $id, ErrorHandler::LEVEL_ERROR, 'crudGestor.php');
+        header("Location: " . ErrorHandler::generateErrorRedirect("dashboard.php", ErrorHandler::ERROR_DB_QUERY));
+        exit();
     }
+    
+    ErrorHandler::logSuccess("User deleted successfully via form, ID: " . $id, 'crudGestor.php');
     header("Location: dashboard.php?eliminado=1");
     exit();
 }

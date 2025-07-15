@@ -56,17 +56,17 @@ try {
     $resultCount = mysqli_query($conexion, $sqlCount);
     
     if (!$resultCount) {
-        error_log("filtrar_propiedades.php - Error en consulta de conteo: " . mysqli_error($conexion));
+        ErrorHandler::logError("Error in property count query: " . mysqli_error($conexion), ErrorHandler::LEVEL_ERROR, 'filtrar_propiedades.php', ['sql' => $sqlCount]);
         $totalPropiedades = 0;
         $totalPaginas = 1;
     } else {
         $row = mysqli_fetch_assoc($resultCount);
         $totalPropiedades = $row['total'];
         $totalPaginas = ceil($totalPropiedades / $propiedadesPorPagina);
-        error_log("filtrar_propiedades.php - Total propiedades: $totalPropiedades, Páginas: $totalPaginas");
+        ErrorHandler::logError("Property count successful: $totalPropiedades properties, $totalPaginas pages", ErrorHandler::LEVEL_DEBUG, 'filtrar_propiedades.php');
     }
 } catch (Exception $e) {
-    error_log("filtrar_propiedades.php - Error en conteo: " . $e->getMessage());
+    ErrorHandler::logError("Exception in property count: " . $e->getMessage(), ErrorHandler::LEVEL_ERROR, 'filtrar_propiedades.php');
     $totalPropiedades = 0;
     $totalPaginas = 1;
 }
@@ -90,15 +90,17 @@ try {
     $result = mysqli_query($conexion, $sql);
     
     if (!$result) {
-        error_log("filtrar_propiedades.php - Error en consulta principal: " . mysqli_error($conexion));
-        die("Error en consulta de propiedades");
+        ErrorHandler::logError("Error in main property query: " . mysqli_error($conexion), ErrorHandler::LEVEL_ERROR, 'filtrar_propiedades.php', ['sql' => $sql]);
+        echo "<div class='alert alert-danger'>Error al cargar propiedades. Por favor, intente nuevamente.</div>";
+        exit;
     }
     
-    error_log("filtrar_propiedades.php - Consulta ejecutada, filas: " . mysqli_num_rows($result));
+    ErrorHandler::logError("Property query successful, rows: " . mysqli_num_rows($result), ErrorHandler::LEVEL_DEBUG, 'filtrar_propiedades.php');
     
 } catch (Exception $e) {
-    error_log("filtrar_propiedades.php - Excepción en consulta: " . $e->getMessage());
-    die("Error en base de datos: " . $e->getMessage());
+    ErrorHandler::logError("Exception in property query: " . $e->getMessage(), ErrorHandler::LEVEL_ERROR, 'filtrar_propiedades.php');
+    echo "<div class='alert alert-danger'>Error al cargar propiedades. Por favor, intente nuevamente.</div>";
+    exit;
 }
 
 echo '<div class="propiedades-grid">';

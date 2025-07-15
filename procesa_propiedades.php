@@ -94,11 +94,10 @@ if(isset($_GET['accion'])) {
             $resultPropiedad = mysqli_query($conn, $sqlPropiedad);
 
             if (!$resultPropiedad) {
-                echo json_encode([
-                    'success' => false,
-                    'error' => mysqli_error($conn)
-                ]);
+                $error = ErrorHandler::handleDatabaseError('delete property', mysqli_error($conn), 'procesa_propiedades.php', $sqlPropiedad);
+                echo ErrorHandler::jsonResponse($error);
             } else {
+                ErrorHandler::logSuccess("Property deleted successfully, ID: $id", 'procesa_propiedades.php');
                 echo json_encode(['success' => true]);
             }
             break;
@@ -110,12 +109,10 @@ if(isset($_GET['accion'])) {
             $result = mysqli_query(conectar(), $sql);
             
             if (!$result) {
-                echo json_encode([
-                    'success' => false,
-                    'error' => mysqli_error(conectar()),
-                    'sql' => $sql
-                ]);
+                $error = ErrorHandler::handleDatabaseError('toggle property status', mysqli_error(conectar()), 'procesa_propiedades.php', $sql);
+                echo ErrorHandler::jsonResponse($error);
             } else {
+                ErrorHandler::logSuccess("Property status toggled successfully, ID: $id, new status: $estado", 'procesa_propiedades.php');
                 echo json_encode(['success' => true]);
             }
             break;
@@ -140,18 +137,15 @@ if(isset($_GET['accion'])) {
                     if (file_exists($rutaArchivo)) {
                         unlink($rutaArchivo);
                     }
+                    ErrorHandler::logSuccess("Image deleted successfully, ID: $idgaleria", 'procesa_propiedades.php');
                     echo json_encode(['success' => true]);
                 } else {
-                    echo json_encode([
-                        'success' => false,
-                        'error' => mysqli_error($conn)
-                    ]);
+                    $error = ErrorHandler::handleDatabaseError('delete image', mysqli_error($conn), 'procesa_propiedades.php', $sqlUpdate);
+                    echo ErrorHandler::jsonResponse($error);
                 }
             } else {
-                echo json_encode([
-                    'success' => false,
-                    'error' => 'No se encontró la imagen'
-                ]);
+                $error = ErrorHandler::handleError('Image not found', ErrorHandler::ERROR_NOT_FOUND, 'procesa_propiedades.php');
+                echo ErrorHandler::jsonResponse($error);
             }
             break;
 
@@ -215,11 +209,8 @@ if(isset($_POST['accion']) && $_POST['accion'] == 'guardarPropiedad') {
                 $bodega, $estacionamiento, $logia, $cocinaamoblada, $antejardin, $patiotrasero, $piscina)";
         $result = mysqli_query($conn, $sql);
         if (!$result) {
-            echo json_encode([
-                'success' => false,
-                'error' => mysqli_error($conn),
-                'sql' => $sql
-            ]);
+            $error = ErrorHandler::handleDatabaseError('insert new property', mysqli_error($conn), 'procesa_propiedades.php', $sql);
+            echo ErrorHandler::jsonResponse($error);
             exit;
         }
         $id = mysqli_insert_id($conn);
@@ -228,12 +219,11 @@ if(isset($_POST['accion']) && $_POST['accion'] == 'guardarPropiedad') {
         $sqlUpdateUser = "UPDATE usuarios SET npropiedad = $id WHERE id = $usuario_id";
         $resultUpdateUser = mysqli_query($conn, $sqlUpdateUser);
         if (!$resultUpdateUser) {
-            echo json_encode([
-                'success' => false,
-                'error' => 'Error al asociar la propiedad al usuario: ' . mysqli_error($conn)
-            ]);
+            $error = ErrorHandler::handleDatabaseError('associate property to user', mysqli_error($conn), 'procesa_propiedades.php', $sqlUpdateUser);
+            echo ErrorHandler::jsonResponse($error);
             exit;
         }
+        ErrorHandler::logSuccess("New property created successfully, ID: $id", 'procesa_propiedades.php');
     } else {
         // Actualizar propiedad existente
         $sql = "UPDATE propiedades SET 
@@ -258,13 +248,11 @@ if(isset($_POST['accion']) && $_POST['accion'] == 'guardarPropiedad') {
                 WHERE idpropiedades = $id";
         $result = mysqli_query($conn, $sql);
         if (!$result) {
-            echo json_encode([
-                'success' => false,
-                'error' => mysqli_error($conn),
-                'sql' => $sql
-            ]);
+            $error = ErrorHandler::handleDatabaseError('update property', mysqli_error($conn), 'procesa_propiedades.php', $sql);
+            echo ErrorHandler::jsonResponse($error);
             exit;
         }
+        ErrorHandler::logSuccess("Property updated successfully, ID: $id", 'procesa_propiedades.php');
     }
 
     // Manejo de imágenes
@@ -286,11 +274,8 @@ if(isset($_POST['accion']) && $_POST['accion'] == 'guardarPropiedad') {
             $resUpdate = mysqli_query($conn, $sqlUpdate);
             
             if (!$resUpdate) {
-                echo json_encode([
-                    'success' => false,
-                    'error' => mysqli_error($conn),
-                    'sql' => $sqlUpdate
-                ]);
+                $error = ErrorHandler::handleDatabaseError('update existing image', mysqli_error($conn), 'procesa_propiedades.php', $sqlUpdate);
+                echo ErrorHandler::jsonResponse($error);
                 exit;
             }
         }
@@ -305,10 +290,8 @@ if(isset($_POST['accion']) && $_POST['accion'] == 'guardarPropiedad') {
         // Validar cantidad máxima total (existentes + nuevas)
         $totalImagenes = count($imagenesExistentes) + $numFiles;
         if ($totalImagenes > 10) {
-            echo json_encode([
-                'success' => false,
-                'error' => 'No se pueden tener más de 10 imágenes en total.'
-            ]);
+            $error = ErrorHandler::handleValidationError('images', 'No se pueden tener más de 10 imágenes en total.', 'procesa_propiedades.php');
+            echo ErrorHandler::jsonResponse($error);
             exit;
         }
 
@@ -319,18 +302,14 @@ if(isset($_POST['accion']) && $_POST['accion'] == 'guardarPropiedad') {
             $error = $imagenesNuevas['error'][$i];
 
             if ($error !== UPLOAD_ERR_OK) {
-                echo json_encode([
-                    'success' => false,
-                    'error' => "Error al subir la imagen $name."
-                ]);
+                $fileError = ErrorHandler::handleFileError($name, $error, 'procesa_propiedades.php');
+                echo ErrorHandler::jsonResponse($fileError);
                 exit;
             }
 
             if (!in_array($type, $allowedTypes)) {
-                echo json_encode([
-                    'success' => false,
-                    'error' => "Formato no permitido para la imagen $name."
-                ]);
+                $validationError = ErrorHandler::handleValidationError('file_type', "Formato no permitido para la imagen $name.", 'procesa_propiedades.php');
+                echo ErrorHandler::jsonResponse($validationError);
                 exit;
             }
 
@@ -340,10 +319,8 @@ if(isset($_POST['accion']) && $_POST['accion'] == 'guardarPropiedad') {
             $destino = $uploadDir . $newName;
 
             if (!move_uploaded_file($tmpName, $destino)) {
-                echo json_encode([
-                    'success' => false,
-                    'error' => "No se pudo guardar la imagen $name."
-                ]);
+                $fileError = ErrorHandler::handleError("No se pudo guardar la imagen $name.", ErrorHandler::ERROR_FILE_UPLOAD, 'procesa_propiedades.php');
+                echo ErrorHandler::jsonResponse($fileError);
                 exit;
             }
 
@@ -353,11 +330,8 @@ if(isset($_POST['accion']) && $_POST['accion'] == 'guardarPropiedad') {
             $resInsert = mysqli_query($conn, $sqlInsert);
             
             if (!$resInsert) {
-                echo json_encode([
-                    'success' => false,
-                    'error' => mysqli_error($conn),
-                    'sql' => $sqlInsert
-                ]);
+                $error = ErrorHandler::handleDatabaseError('insert image', mysqli_error($conn), 'procesa_propiedades.php', $sqlInsert);
+                echo ErrorHandler::jsonResponse($error);
                 exit;
             }
         }

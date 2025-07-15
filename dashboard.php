@@ -9,6 +9,7 @@ if (isset($_GET['error']) || isset($_GET['registrado']) || isset($_GET['modifica
     
     if (isset($_GET['error'])) {
         switch($_GET['error']) {
+            case 'invalid_file':
             case 'pdf_only':
                 echo "Swal.fire({
                     icon: 'error',
@@ -28,10 +29,56 @@ if (isset($_GET['error']) || isset($_GET['registrado']) || isset($_GET['modifica
                 });";
                 break;
             case 'db_error':
+            case 'db_query':
                 echo "Swal.fire({
                     icon: 'error',
                     title: 'Error en la base de datos',
-                    text: 'Ocurrió un error al procesar la solicitud'
+                    text: 'Error en la base de datos. Por favor, intente nuevamente.'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });";
+                break;
+            case 'validation_error':
+                echo "Swal.fire({
+                    icon: 'error',
+                    title: 'Error de validación',
+                    text: 'Los datos ingresados no son válidos. Por favor, verifique la información.'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });";
+                break;
+            case 'file_error':
+                echo "Swal.fire({
+                    icon: 'error',
+                    title: 'Error al subir archivo',
+                    text: 'Hubo un problema al subir el archivo. Verifique el tamaño y formato.'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });";
+                break;
+            case 'permission_error':
+                echo "Swal.fire({
+                    icon: 'error',
+                    title: 'Sin permisos',
+                    text: 'No tiene permisos para realizar esta acción.'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });";
+                break;
+            case 'not_found':
+                echo "Swal.fire({
+                    icon: 'error',
+                    title: 'No encontrado',
+                    text: 'El registro solicitado no fue encontrado.'
+                }).then(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });";
+                break;
+            default:
+                echo "Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ha ocurrido un error. Por favor, intente nuevamente.'
                 }).then(() => {
                     window.history.replaceState({}, document.title, window.location.pathname);
                 });";
