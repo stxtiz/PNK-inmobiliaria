@@ -8,6 +8,9 @@ define('DB_PASS', '');           // Cambia por tu contraseña de AWS
 define('DB_NAME', 'penka');      // Cambia por el nombre de tu base de datos en AWS
 define('DB_PORT', 3306);         // Puerto de la base de datos
 
+// Include centralized error handler
+require_once __DIR__ . '/error_handler.php';
+
 function conectar() 
 {
     // Habilitar reporte de errores de MySQL
@@ -18,7 +21,7 @@ function conectar()
         
         // Verificar la conexión
         if (!$con) {
-            error_log("Error de conexión a la base de datos: " . mysqli_connect_error());
+            ErrorHandler::logError("Database connection failed: " . mysqli_connect_error(), ErrorHandler::LEVEL_CRITICAL, 'config.php');
             die("Error de conexión a la base de datos");
         }
         
@@ -27,8 +30,8 @@ function conectar()
         
         return $con;
     } catch (Exception $e) {
-        error_log("Excepción en conexión a BD: " . $e->getMessage());
-        die("Error de conexión a la base de datos: " . $e->getMessage());
+        ErrorHandler::logError("Database connection exception: " . $e->getMessage(), ErrorHandler::LEVEL_CRITICAL, 'config.php');
+        die("Error de conexión a la base de datos");
     }
 }
 
@@ -39,14 +42,14 @@ function contarusu()
         $result = mysqli_query(conectar(), $sql);
         
         if (!$result) {
-            error_log("Error en consulta contarusu: " . mysqli_error(conectar()));
+            ErrorHandler::logError("Error in contarusu query: " . mysqli_error(conectar()), ErrorHandler::LEVEL_ERROR, 'config.php');
             return 0;
         }
         
         $contador = mysqli_num_rows($result);
         return $contador;
     } catch (Exception $e) {
-        error_log("Error en contarusu: " . $e->getMessage());
+        ErrorHandler::logError("Exception in contarusu: " . $e->getMessage(), ErrorHandler::LEVEL_ERROR, 'config.php');
         return 0;
     }
 }
