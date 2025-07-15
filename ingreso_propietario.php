@@ -49,14 +49,23 @@ if(isset($_POST['opoculto'])) {
             $result_verificar = mysqli_query($conexion, $query_verificar);
             
             if (!$result_verificar) {
-                error_log("ingreso_propietario.php - Error en consulta de verificación: " . mysqli_error($conexion));
-                throw new Exception("Error al verificar el correo");
+                $error = ErrorHandler::handleDatabaseError('email verification for property owner', mysqli_error($conexion), 'ingreso_propietario.php', $query_verificar);
+                echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error en la base de datos',
+                        text: 'Error en la base de datos. Por favor, intente nuevamente.'
+                    }).then(function() {
+                        window.location = 'registro_propietario.php';
+                    });
+                </script>";
+                exit();
             }
             
             $row_verificar = mysqli_fetch_assoc($result_verificar);
 
             if($row_verificar['total'] > 0) {
-                error_log("ingreso_propietario.php - Correo ya existe: $correo");
+                ErrorHandler::logError("Email already exists for property owner registration: " . $correo, ErrorHandler::LEVEL_WARNING, 'ingreso_propietario.php');
                 echo "<script>
                     Swal.fire({
                         icon: 'error',
@@ -73,11 +82,11 @@ if(isset($_POST['opoculto'])) {
 $query = "INSERT INTO usuarios (rut, nombres, ap_paterno, ap_materno, usuario, clave, sexo, estado, npropiedad, telefono, fechanacimiento, tipo, certificado) 
          VALUES ('$rut', '$nombres', '$appaterno', '$apmaterno', '$correo', '$clave', '$sexo', '1', '$npropiedad', '$telefono', '$fechanacimiento', '2', '')";
             
-            error_log("ingreso_propietario.php - Ejecutando consulta de inserción");
+            ErrorHandler::logError("Executing property owner registration", ErrorHandler::LEVEL_DEBUG, 'ingreso_propietario.php');
             $result = mysqli_query($conexion, $query);
             
             if($result) {
-                error_log("ingreso_propietario.php - Propietario registrado exitosamente: $correo");
+                ErrorHandler::logSuccess("Property owner registered successfully: " . $correo, 'ingreso_propietario.php');
                 echo "<script>
                     Swal.fire({
                         icon: 'success',
@@ -88,12 +97,12 @@ $query = "INSERT INTO usuarios (rut, nombres, ap_paterno, ap_materno, usuario, c
                     });
                 </script>";
             } else {
-                error_log("ingreso_propietario.php - Error en inserción: " . mysqli_error($conexion));
+                $error = ErrorHandler::handleDatabaseError('property owner insertion', mysqli_error($conexion), 'ingreso_propietario.php', $query);
                 echo "<script>
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Error al registrar el propietario: " . addslashes(mysqli_error($conexion)) . "'
+                        text: 'Error en la base de datos. Por favor, intente nuevamente.'
                     }).then(function() {
                         window.location = 'registro_propietario.php';
                     });
